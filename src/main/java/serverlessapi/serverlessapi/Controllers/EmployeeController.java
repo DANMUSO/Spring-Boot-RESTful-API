@@ -41,4 +41,10 @@ public class EmployeeController {
     {
         return "Delete the employee details  " +  id;
     }
+
+    @PutMapping("/updateemployee/{id}")
+    public Employees updateEmployee(@PathVariable Long id, @RequestBody  Employees employees){
+
+        return employees;
+    }
 }
