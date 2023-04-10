@@ -2,13 +2,21 @@ package serverlessapi.serverlessapi.Controllers;
 
 
 
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import serverlessapi.serverlessapi.EmployeeService.EmployeeService;
 import serverlessapi.serverlessapi.Models.Employees;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class EmployeeController {
 
+    @Autowired
+    private EmployeeService eService;
     @Value("${app.name}")
     private String appName;
     @Value("${app.version}")
@@ -21,30 +29,31 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees")
-    public String getEmployees() {
+    public List<Employees> getEmployees() {
 
-        return "Get Employees.";
+        return eService.getEmployees();
     }
 
     @GetMapping("/employees/{id}")
-    public String getEmployee(@PathVariable Long id){
-        return "Employee ID  " + id;
+    public Optional<Employees> getEmployee(@PathVariable Long id){
+        return eService.getSingleEmployee(id);
     }
 
     @PostMapping("/employees")
-    public String SaveEmployees(@RequestBody Employees employees){
+    public Employees SaveEmployees(@Valid @RequestBody Employees employees){
 
-        return "Saving the staff to DB " + employees;
+        return eService.saveEmployee(employees);
     }
     @DeleteMapping("/employees")
-    public String deleteEmployee (@RequestParam Long id)
+    public void deleteEmployee (@RequestParam Long id)
     {
-        return "Delete the employee details  " +  id;
+        eService.deleteEmployee(id);
     }
 
     @PutMapping("/updateemployee/{id}")
     public Employees updateEmployee(@PathVariable Long id, @RequestBody  Employees employees){
 
-        return employees;
+        employees.setId(id);
+        return eService.updateEmployee(employees);
     }
 }
