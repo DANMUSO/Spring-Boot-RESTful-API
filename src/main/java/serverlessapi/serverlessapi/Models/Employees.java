@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,7 @@ public class Employees {
     @Column( name = "id")
     private Long id;
 
+    @NotBlank( message = "Name is required")
     @NotNull( message ="Name should not be empty" )
     @Column( name = "name")
     private String name;
@@ -35,10 +37,13 @@ public class Employees {
     @Column( name = "age")
     private Long age = 0L;
 
+
+    @NotBlank( message = "Location is required")
     @NotNull( message ="Location should not be empty" )
     @Column( name = "location")
     private String location;
 
+    @NotBlank( message = "Email is required")
     @Email( message = "Example info@example.com")
     @NotNull( message ="Email should not be empty" )
     @Column( name = "email")
