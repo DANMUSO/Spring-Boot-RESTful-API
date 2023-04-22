@@ -4,7 +4,10 @@ package serverlessapi.serverlessapi.Controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import serverlessapi.serverlessapi.EmployeeService.EmployeeService;
 import serverlessapi.serverlessapi.Models.Employees;
@@ -15,13 +18,14 @@ import java.util.Optional;
 @RestController
 public class EmployeeController {
 
+
     @Autowired
     private EmployeeService eService;
     @Value("${app.name}")
     private String appName;
     @Value("${app.version}")
     private String appVersion;
-
+    @Qualifier("eService")
 
     @GetMapping("/version")
     public String getAppDetails(){
@@ -29,32 +33,40 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees")
-    public List<Employees> getEmployees() {
+    public ResponseEntity<List<Employees>> getEmployees() {
 
-        return eService.getEmployees();
+        return new ResponseEntity<List<Employees>>(eService.getEmployees(), HttpStatus.OK);
     }
 
     @GetMapping("/employees/{id}")
-    public Optional<Employees> getEmployee(@PathVariable Long id){
-        return eService.getSingleEmployee(id);
+    public ResponseEntity<Optional<Employees>> getEmployee(@PathVariable Long id){
+        return new ResponseEntity<Optional<Employees>>(eService.getSingleEmployee(id), HttpStatus.OK);
     }
 
     @PostMapping("/employees")
-    public Employees SaveEmployees(@Valid @RequestBody Employees employees){
+    public ResponseEntity<Employees> SaveEmployees(@Valid @RequestBody Employees employees){
 
-        return eService.saveEmployee(employees);
+        return new ResponseEntity<>(eService.saveEmployee(employees), HttpStatus.OK) ;
 
     }
     @DeleteMapping("/employees")
-    public void deleteEmployee (@RequestParam Long id)
+    public ResponseEntity<HttpStatus> deleteEmployee (@RequestParam Long id)
     {
-        eService.deleteEmployee(id);
+       return new ResponseEntity<HttpStatus>(HttpStatus.NO_CONTENT) ;
     }
 
     @PutMapping("/updateemployee/{id}")
-    public Employees updateEmployee(@PathVariable Long id, @RequestBody  Employees employees){
+    public ResponseEntity<Employees> updateEmployee(@PathVariable Long id, @RequestBody  Employees employees){
 
         employees.setId(id);
-        return eService.updateEmployee(employees);
+        return new ResponseEntity<Employees>( eService.updateEmployee(employees), HttpStatus.OK);
     }
+
+    @GetMapping("/employee/filterByName")
+    public ResponseEntity<List<Employees>> getEmployeesByName(@RequestParam String name){
+        return new ResponseEntity<List<Employees>>(eService.getEmployeesByName(name), HttpStatus.OK);
+    }
+
+
+
 }

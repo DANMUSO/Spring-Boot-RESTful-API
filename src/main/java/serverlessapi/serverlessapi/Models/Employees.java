@@ -43,6 +43,7 @@ public class Employees {
     @Column( name = "location")
     private String location;
 
+
     @NotBlank( message = "Email is required")
     @Email( message = "Example info@example.com")
     @NotNull( message ="Email should not be empty" )
